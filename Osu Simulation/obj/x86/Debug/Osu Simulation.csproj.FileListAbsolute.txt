@@ -22,3 +22,5 @@ D:\Programing\CSharp\Osu Simulation\Osu Simulation\obj\x86\Debug\Osu Simulation.
 D:\Programing\CSharp\Osu Simulation\Osu Simulation\obj\x86\Debug\Osu Simulation.csproj.CoreCompileInputs.cache
 D:\Programing\CSharp\Osu Simulation\Osu Simulation\obj\x86\Debug\Osu Simulation.exe
 D:\Programing\CSharp\Osu Simulation\Osu Simulation\obj\x86\Debug\Osu Simulation.pdb
+D:\Programing\CSharp\Osu Simulation\Osu Simulation\bin\Windows\x86\Debug\CSCore.dll
+D:\Programing\CSharp\Osu Simulation\Osu Simulation\bin\Windows\x86\Debug\CSCore.xml

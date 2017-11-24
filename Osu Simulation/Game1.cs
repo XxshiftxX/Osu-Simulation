@@ -9,6 +9,9 @@ namespace Osu_Simulation
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        delegate void LoopDelegate();
+        LoopDelegate loopDelegate;
+
         bool ao = false;
         bool so = false;
 
@@ -23,6 +26,8 @@ namespace Osu_Simulation
             // TODO: Add your initialization logic here
 
             base.Initialize();
+            ReadOsuFile(@"D:\TestOsu.osu");
+            PlayGame();
         }
 
         /// <summary>
@@ -56,27 +61,7 @@ namespace Osu_Simulation
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (!ao && Keyboard.GetState().IsKeyDown(Keys.A))
-            {
-                ReadOsuFile(@"D:\TestOsu.osu");
-                ao = true;
-            }
-            if(Keyboard.GetState().IsKeyUp(Keys.A))
-            {
-                ao = false;
-            }
-
-            if (!so && Keyboard.GetState().IsKeyDown(Keys.S))
-            {
-                HitObject h = HitObjects.Pop();
-                System.Diagnostics.Debug.WriteLine("타이밍 : " + h.Time);
-                System.Diagnostics.Debug.WriteLine("키 라인 : " + h.Line);
-                so = true;
-            }
-            if (Keyboard.GetState().IsKeyUp(Keys.S))
-            {
-                so = false;
-            }
+            loopDelegate();
 
             base.Update(gameTime);
         }
