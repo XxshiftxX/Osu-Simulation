@@ -15,5 +15,12 @@ namespace Osu_Simulation
         public int Line { get => line; }
         public int Time { get => time; }
         public char Type { get => type; }
+
+        public HitObject(int line, int time /*, char type */)
+        {
+            this.line = line;
+            this.time = time;
+            // this.type = type;
+        }
     }
 }
