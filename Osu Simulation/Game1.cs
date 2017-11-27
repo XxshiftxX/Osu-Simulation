@@ -9,6 +9,11 @@ namespace Osu_Simulation
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        Texture2D noteTexture;
+        Texture2D stageLeftTexture;
+        Texture2D stageRightTexture;
+        Texture2D stageHintTexture;
+
         delegate void LoopDelegate();
         LoopDelegate loopDelegate;
 
@@ -27,6 +32,10 @@ namespace Osu_Simulation
 
             base.Initialize();
             ReadOsuFile(@"D:\TestOsu.osu");
+            noteTexture = this.Content.Load<Texture2D>("mania-note1");
+            stageLeftTexture = this.Content.Load<Texture2D>("mania-stage-left");
+            stageRightTexture = this.Content.Load<Texture2D>("mania-stage-right");
+            stageHintTexture = this.Content.Load<Texture2D>("mania-stage-hint");
             PlayGame();
         }
 
@@ -61,7 +70,11 @@ namespace Osu_Simulation
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            loopDelegate();
+            if (loopDelegate != null)
+                loopDelegate();
+
+            if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                
 
             base.Update(gameTime);
         }
@@ -74,7 +87,33 @@ namespace Osu_Simulation
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+#pragma warning disable CS0618 // 형식 또는 멤버는 사용되지 않습니다.
+
+
+            // X : 80, 150, 220, 290 
+            // spriteBatch.Draw(noteTexture, new Rectangle(X, Y, 70, 20), new Rectangle(0, 0 ,noteTexture.Width, noteTexture.Height), Color.White);
+
+            spriteBatch.Draw(stageLeftTexture, new Rectangle(20, 0, 60,490), new Rectangle(0, 0, stageLeftTexture.Width, stageLeftTexture.Height), Color.White);
+            spriteBatch.Draw(stageRightTexture, new Rectangle(360, 0, 60,490), new Rectangle(0, 0, stageRightTexture.Width, stageRightTexture.Height), Color.White);
+            spriteBatch.Draw(stageHintTexture, new Rectangle(80, 400, 280, 18), new Rectangle(0, 0, stageHintTexture.Width, stageHintTexture.Height), Color.White);
+            
+
+            
+            for(int i = 0; i < DisplayingHitObjects.Count; i++)
+            {
+                if (DisplayingHitObjects[i].Y > graphics.PreferredBackBufferHeight + 20)
+                {
+                    DisplayingHitObjects.Remove(DisplayingHitObjects[i]);
+                    continue;
+                }
+
+                spriteBatch.Draw(noteTexture, new Rectangle(DisplayingHitObjects[i].X, DisplayingHitObjects[i].Y, 70, 20), new Rectangle(0, 0, noteTexture.Width, noteTexture.Height), Color.White);
+                DisplayingHitObjects[i].Y += 10;
+            }
+
+#pragma warning restore CS0618 // 형식 또는 멤버는 사용되지 않습니다.
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }

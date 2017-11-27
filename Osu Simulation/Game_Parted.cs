@@ -17,8 +17,12 @@ namespace Osu_Simulation
     {
         DateTime gameStartedPoint;
         Stack<HitObject> HitObjects = new Stack<HitObject>();
+        List<HitObject> DisplayingHitObjects = new List<HitObject>();
+        int sync = 550;
 
         Dictionary<string, string> OsuMetaData = new Dictionary<string, string>();
+
+        DateTime drawLoopPoint = new DateTime(0);
 
         private void ReadOsuFile(string filePath)
         {
@@ -65,31 +69,48 @@ namespace Osu_Simulation
 
             soundOut = new WasapiOut() { Device = device, Latency = 100 };
             soundOut.Initialize(soundSource);
+
             soundOut.Play();
         }
 
         private void PlayGame()
         {
+            drawLoopPoint = DateTime.Now;
+
             // 나중에 ReadOsuFile에서 파일 읽어오기
             PlayMusic(@"D:\TestOsu.osu", "Suzumu feat. Kagamine Len - Kakumeisei Ousama Densenbyou.mp3");
             gameStartedPoint = DateTime.Now;
+
+            int test = 0;
 
             loopDelegate += () =>
             {
                 HitObject checkHitObject = HitObjects.Peek();
                 double nowTiming = (DateTime.Now - gameStartedPoint).TotalMilliseconds;
                 
-                if(checkHitObject.Time <= nowTiming)
+                if(checkHitObject.Time <= nowTiming + sync)
                 {
                     HitObjects.Pop();
-                    GenerateNote(checkHitObject.Line);
+                    DisplayingHitObjects.Add(checkHitObject);
+                    loopDelegate();
+                }
+
+                if (DisplayingHitObjects.Count > 0 && DisplayingHitObjects[0].Time <= nowTiming)
+                {
+                    System.Diagnostics.Debug.WriteLine(test++);
+                    DisplayingHitObjects.Remove(DisplayingHitObjects[0]);
                 }
             };
         }
 
-        private void GenerateNote(int line)
+        private bool DrawTiming()
         {
-            throw new NotImplementedException();
+            if(drawLoopPoint < DateTime.Now)
+            {
+                drawLoopPoint.Add(new TimeSpan(10));
+                return true;
+            }
+            return false;
         }
     }
 }

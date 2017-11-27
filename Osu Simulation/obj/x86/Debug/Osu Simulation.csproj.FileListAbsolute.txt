@@ -24,3 +24,7 @@ D:\Programing\CSharp\Osu Simulation\Osu Simulation\obj\x86\Debug\Osu Simulation.
 D:\Programing\CSharp\Osu Simulation\Osu Simulation\obj\x86\Debug\Osu Simulation.pdb
 D:\Programing\CSharp\Osu Simulation\Osu Simulation\bin\Windows\x86\Debug\CSCore.dll
 D:\Programing\CSharp\Osu Simulation\Osu Simulation\bin\Windows\x86\Debug\CSCore.xml
+D:\Programing\CSharp\Osu Simulation\Osu Simulation\bin\Windows\x86\Debug\Content\mania-note1.xnb
+D:\Programing\CSharp\Osu Simulation\Osu Simulation\bin\Windows\x86\Debug\Content\mania-stage-hint.xnb
+D:\Programing\CSharp\Osu Simulation\Osu Simulation\bin\Windows\x86\Debug\Content\mania-stage-left.xnb
+D:\Programing\CSharp\Osu Simulation\Osu Simulation\bin\Windows\x86\Debug\Content\mania-stage-right.xnb
