@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -20,6 +22,10 @@ namespace Osu_Simulation
         bool ao = false;
         bool so = false;
 
+        Dictionary<Keys, bool> keyPressed = new Dictionary<Keys, bool>();
+
+        SpriteFont font;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -31,11 +37,14 @@ namespace Osu_Simulation
             // TODO: Add your initialization logic here
 
             base.Initialize();
-            ReadOsuFile(@"D:\TestOsu.osu");
+            ReadOsuFile(@"C:\Users\dsm2017\AppData\Local\osu!\Songs\654486 kamome sano Electric Orchestra - FIN4LE -Shushisen no Kanata e-\kamome sano Electric Orchestra - FIN4LE ~Shushisen no Kanata e~ (Faing Fain) [ADVANCED].osu");
             noteTexture = this.Content.Load<Texture2D>("mania-note1");
             stageLeftTexture = this.Content.Load<Texture2D>("mania-stage-left");
             stageRightTexture = this.Content.Load<Texture2D>("mania-stage-right");
             stageHintTexture = this.Content.Load<Texture2D>("mania-stage-hint");
+            font = this.Content.Load<SpriteFont>("ComboFont");
+            graphics.PreferredBackBufferHeight = 600;
+            graphics.ApplyChanges();
             PlayGame();
         }
 
@@ -73,9 +82,65 @@ namespace Osu_Simulation
             if (loopDelegate != null)
                 loopDelegate();
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                if(!keyPressed[Keys.D])
+                {
+                    KeyInput(0, System.DateTime.Now);
+                }
 
+                keyPressed[Keys.D] = true;
+            }
+            if (Keyboard.GetState().IsKeyUp(Keys.D))
+            {
+                keyPressed[Keys.D] = false;
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.F))
+            {
+                if (!keyPressed[Keys.F])
+                {
+                    KeyInput(1, System.DateTime.Now);
+                }
+
+                keyPressed[Keys.F] = true;
+            }
+            if (Keyboard.GetState().IsKeyUp(Keys.F))
+            {
+                keyPressed[Keys.F] = false;
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.J))
+            {
+                if (!keyPressed[Keys.J])
+                {
+                    KeyInput(2, System.DateTime.Now);
+                }
+
+                keyPressed[Keys.J] = true;
+            }
+            if (Keyboard.GetState().IsKeyUp(Keys.J))
+            {
+                keyPressed[Keys.J] = false;
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.K))
+            {
+                if (!keyPressed[Keys.K])
+                {
+                    KeyInput(3, System.DateTime.Now);
+                }
+
+                keyPressed[Keys.K] = true;
+            }
+            if (Keyboard.GetState().IsKeyUp(Keys.K))
+            {
+                keyPressed[Keys.K] = false;
+            }
+
+            Health -= 0.3f;
+            if (Health > 300)
+                Health = 300;
             base.Update(gameTime);
         }
 
@@ -85,37 +150,55 @@ namespace Osu_Simulation
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            spriteBatch.Begin();
+            GraphicsDevice.Clear(Color.Black);
+            
 #pragma warning disable CS0618 // 형식 또는 멤버는 사용되지 않습니다.
 
+            spriteBatch.Begin();
+            for (int i = 0; i < DisplayingHitObjects.Count; i++)
+            {
+                DisplayingHitObjects[i].Y += 17;
+                spriteBatch.Draw(noteTexture,
+                    new Rectangle(DisplayingHitObjects[i].X, DisplayingHitObjects[i].Y, 70, 20),
+                    new Rectangle(0, 0, noteTexture.Width, noteTexture.Height),
+                    Color.White);
+            }
 
+            spriteBatch.End();
+            spriteBatch.Begin();
             // X : 80, 150, 220, 290 
             // spriteBatch.Draw(noteTexture, new Rectangle(X, Y, 70, 20), new Rectangle(0, 0 ,noteTexture.Width, noteTexture.Height), Color.White);
 
-            spriteBatch.Draw(stageLeftTexture, new Rectangle(20, 0, 60,490), new Rectangle(0, 0, stageLeftTexture.Width, stageLeftTexture.Height), Color.White);
-            spriteBatch.Draw(stageRightTexture, new Rectangle(360, 0, 60,490), new Rectangle(0, 0, stageRightTexture.Width, stageRightTexture.Height), Color.White);
-            spriteBatch.Draw(stageHintTexture, new Rectangle(80, 400, 280, 18), new Rectangle(0, 0, stageHintTexture.Width, stageHintTexture.Height), Color.White);
-            
+            spriteBatch.Draw(stageLeftTexture, new Rectangle(20, 0, 60,600), new Rectangle(0, 0, stageLeftTexture.Width, stageLeftTexture.Height), Color.White);
+            spriteBatch.Draw(stageRightTexture, new Rectangle(360, 0, 60,600), new Rectangle(0, 0, stageRightTexture.Width, stageRightTexture.Height), Color.White);
+            spriteBatch.Draw(stageHintTexture, new Rectangle(80, 492, 280, 18), new Rectangle(0, 0, stageHintTexture.Width, stageHintTexture.Height), Color.White);
+            spriteBatch.DrawString(font, $"{GamePoint}", new Vector2(400, 100), Color.White);
+            spriteBatch.DrawString(font, $"{Combo} Combo!", new Vector2(180, 100), Color.White);
+            spriteBatch.DrawString(font, judgeMessage, new Vector2(180, 300), Color.White);
 
+            Texture2D rect = new Texture2D(graphics.GraphicsDevice, (int)Health, 20);
+            Color[] data = new Color[(int)Health *20];
+            for (int i = 0; i < data.Length; ++i) data[i] = Color.Red;
+            rect.SetData(data);
+            spriteBatch.Draw(rect, new Vector2(374, graphics.PreferredBackBufferHeight - 20), Color.Red);
+
+            spriteBatch.End();
             
-            for(int i = 0; i < DisplayingHitObjects.Count; i++)
+            base.Draw(gameTime);
+            
+            for (int i = 0; i < DisplayingHitObjects.Count; i++)
             {
                 if (DisplayingHitObjects[i].Y > graphics.PreferredBackBufferHeight + 20)
                 {
                     DisplayingHitObjects.Remove(DisplayingHitObjects[i]);
+                    Combo = 0;
+                    Health -= 50;
+                    judgeMessage = "MISS!";
                     continue;
                 }
-
-                spriteBatch.Draw(noteTexture, new Rectangle(DisplayingHitObjects[i].X, DisplayingHitObjects[i].Y, 70, 20), new Rectangle(0, 0, noteTexture.Width, noteTexture.Height), Color.White);
-                DisplayingHitObjects[i].Y += 10;
             }
 
 #pragma warning restore CS0618 // 형식 또는 멤버는 사용되지 않습니다.
-            spriteBatch.End();
-
-            base.Draw(gameTime);
         }
     }
 }

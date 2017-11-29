@@ -61,3 +61,10 @@
 /processorParam:TextureFormat=Color
 /build:mania-stage-hint.png
 
+#begin ComboFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:ComboFont.spritefont
+

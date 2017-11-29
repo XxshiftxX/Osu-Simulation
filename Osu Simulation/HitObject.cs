@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Osu_Simulation
 {
-    class HitObject
+    public class HitObject : IComparable
     {
         private int line;
         private int time;
@@ -27,6 +27,31 @@ namespace Osu_Simulation
             this.time = time;
             x = line * 70 + 80;
             // this.type = type;
+        }
+
+        public int CompareTo(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool operator <(HitObject h1, HitObject h2)
+        {
+            return h1.Time < h2.Time;
+        }
+
+        public static bool operator >(HitObject h1, HitObject h2)
+        {
+            return h1.Time > h2.Time;
+        }
+
+        public static bool operator <=(HitObject h1, HitObject h2)
+        {
+            return h1.Time <= h2.Time;
+        }
+
+        public static bool operator >=(HitObject h1, HitObject h2)
+        {
+            return h1.Time >= h2.Time;
         }
     }
 }

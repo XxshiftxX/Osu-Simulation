@@ -18,9 +18,18 @@ namespace Osu_Simulation
         DateTime gameStartedPoint;
         Stack<HitObject> HitObjects = new Stack<HitObject>();
         List<HitObject> DisplayingHitObjects = new List<HitObject>();
-        int sync = 550;
+        HitObjectHeap[] CreatedHitObjects = new HitObjectHeap[4] {
+            new HitObjectHeap(), new HitObjectHeap(), new HitObjectHeap(), new HitObjectHeap()
+        };
+
+        int sync = 500;
 
         Dictionary<string, string> OsuMetaData = new Dictionary<string, string>();
+
+        int Combo;
+        int GamePoint;
+        float Health = 300;
+        string judgeMessage = "";
 
         DateTime drawLoopPoint = new DateTime(0);
 
@@ -78,28 +87,50 @@ namespace Osu_Simulation
             drawLoopPoint = DateTime.Now;
 
             // 나중에 ReadOsuFile에서 파일 읽어오기
-            PlayMusic(@"D:\TestOsu.osu", "Suzumu feat. Kagamine Len - Kakumeisei Ousama Densenbyou.mp3");
+            PlayMusic(@"C:\Users\dsm2017\AppData\Local\osu!\Songs\654486 kamome sano Electric Orchestra - FIN4LE -Shushisen no Kanata e-", @"C:\Users\dsm2017\AppData\Local\osu!\Songs\654486 kamome sano Electric Orchestra - FIN4LE -Shushisen no Kanata e-\audio.mp3");
             gameStartedPoint = DateTime.Now;
-
-            int test = 0;
 
             loopDelegate += () =>
             {
-                HitObject checkHitObject = HitObjects.Peek();
                 double nowTiming = (DateTime.Now - gameStartedPoint).TotalMilliseconds;
-                
-                if(checkHitObject.Time <= nowTiming + sync)
+                if (HitObjects.Count > 0)
                 {
-                    HitObjects.Pop();
-                    DisplayingHitObjects.Add(checkHitObject);
-                    loopDelegate();
+                    HitObject checkHitObject = HitObjects.Peek();
+
+                    if (checkHitObject.Time <= nowTiming + sync)
+                    {
+                        DisplayingHitObjects.Add(checkHitObject);
+                        CreatedHitObjects[HitObjects.Pop().Line].Add(checkHitObject);
+                        loopDelegate();
+                    }
                 }
 
+                for (int i = 0; i < 4; i++)
+                {
+                    if (CreatedHitObjects[i].Count == 0)
+                        continue;
+
+                    HitObject temp = CreatedHitObjects[i].RemoveOne();
+                    if (temp.Time + 200 < nowTiming)
+                    {
+                        Combo = 0;
+                        Health -= 50;
+                        judgeMessage = "MISS!";
+                    }
+                    else
+                    {
+                        CreatedHitObjects[i].Add(temp);
+                    }
+                }
+
+                /*
                 if (DisplayingHitObjects.Count > 0 && DisplayingHitObjects[0].Time <= nowTiming)
                 {
                     System.Diagnostics.Debug.WriteLine(test++);
                     DisplayingHitObjects.Remove(DisplayingHitObjects[0]);
                 }
+                */
+                
             };
         }
 
@@ -111,6 +142,76 @@ namespace Osu_Simulation
                 return true;
             }
             return false;
+        }
+
+        private void KeyInput(int input, DateTime inputTime)
+        {
+            int intervel;
+            HitObject min = null;
+            HitObject max = null;
+            HitObject nearest;
+            double nowTiming = (DateTime.Now - gameStartedPoint).TotalMilliseconds;
+
+            for (int i = 0; i < CreatedHitObjects[input].Count; i++)
+            {
+                HitObject temp = CreatedHitObjects[input].RemoveOne();
+                DisplayingHitObjects.Remove(temp);
+
+                if (temp.Time > nowTiming)
+                {
+                    max = temp;
+                    break;
+                }
+                else
+                {
+                    min = temp;
+                }
+            }
+
+            if (min == null)
+                return;
+            if (max == null || max > min)
+            {
+                nearest = min;
+            }
+            else
+            {
+                nearest = max;
+            }
+
+            intervel = (int)((inputTime - gameStartedPoint).TotalMilliseconds) - nearest.Time;
+
+            if (intervel < 0) intervel = -intervel;
+            if (intervel < 200)
+            {
+                if (intervel < 30)
+                {
+                    Combo++;
+                    GamePoint += 300;
+                    judgeMessage = "300";
+                    Health += 60;
+                }
+                else if (intervel < 60)
+                {
+                    Combo++;
+                    GamePoint += 100;
+                    judgeMessage = "100";
+                    Health += 40;
+                }
+                else if (intervel < 90)
+                {
+                    Combo++;
+                    GamePoint += 50;
+                    judgeMessage = "50";
+                    Health += 20;
+                }
+                else
+                {
+                    Combo = 0;
+                    judgeMessage = "Bad";
+                }
+            }
+            return;
         }
     }
 }
