@@ -9,5 +9,9 @@
     <File>D:/Programing/CSharp/Osu Simulation/Osu Simulation/Content/mania-stage-right.png</File>
     <File>D:/Programing/CSharp/Osu Simulation/Osu Simulation/Content/mania-stage-hint.png</File>
     <File>D:/Programing/CSharp/Osu Simulation/Osu Simulation/Content/ComboFont.spritefont</File>
+    <File>D:/Programing/CSharp/Osu Simulation/Osu Simulation/Content/normal-hitnormal.wav</File>
+    <File>D:/Programing/CSharp/Osu Simulation/Osu Simulation/Content/mania-note1L.png</File>
+    <File>D:/Programing/CSharp/Osu Simulation/Osu Simulation/Content/mania-note1T.png</File>
+    <File>D:/Programing/CSharp/Osu Simulation/Osu Simulation/Content/mania-note1H.png</File>
   </SourceFiles>
 </SourceFileCollection>

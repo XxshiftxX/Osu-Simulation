@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SourceFile>D:/Programing/CSharp/Osu Simulation/Osu Simulation/Content/normal-hitnormal.wav</SourceFile>
+  <SourceTime>2017-09-30T18:20:46.2857898+09:00</SourceTime>
+  <DestFile>D:/Programing/CSharp/Osu Simulation/Osu Simulation/Content/bin/Windows/normal-hitnormal.xnb</DestFile>
+  <DestTime>2017-11-30T10:32:12.5285267+09:00</DestTime>
+  <Importer>WavImporter</Importer>
+  <ImporterTime>2017-03-02T00:05:36+09:00</ImporterTime>
+  <Processor>SoundEffectProcessor</Processor>
+  <ProcessorTime>2017-03-02T00:05:36+09:00</ProcessorTime>
+  <Parameters>
+    <Key>Quality</Key>
+    <Value>Best</Value>
+  </Parameters>
+  <Dependencies />
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>

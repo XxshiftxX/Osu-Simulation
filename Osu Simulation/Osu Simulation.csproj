@@ -41,6 +41,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DisplayingObject.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Game_Parted.cs" />
     <Compile Include="Heap.cs" />

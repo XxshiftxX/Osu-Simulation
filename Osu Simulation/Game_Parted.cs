@@ -18,8 +18,9 @@ namespace Osu_Simulation
         DateTime gameStartedPoint;
         Stack<HitObject> HitObjects = new Stack<HitObject>();
         List<HitObject> DisplayingHitObjects = new List<HitObject>();
-        HitObjectHeap[] CreatedHitObjects = new HitObjectHeap[4] {
-            new HitObjectHeap(), new HitObjectHeap(), new HitObjectHeap(), new HitObjectHeap()
+        Queue<HitObject>[] CreatedHitObjects = new Queue<HitObject>[4]
+        {
+            new Queue<HitObject>(), new Queue<HitObject>(), new Queue<HitObject>(), new Queue<HitObject>()
         };
 
         int sync = 500;
@@ -87,7 +88,7 @@ namespace Osu_Simulation
             drawLoopPoint = DateTime.Now;
 
             // 나중에 ReadOsuFile에서 파일 읽어오기
-            PlayMusic(@"C:\Users\dsm2017\AppData\Local\osu!\Songs\654486 kamome sano Electric Orchestra - FIN4LE -Shushisen no Kanata e-", @"C:\Users\dsm2017\AppData\Local\osu!\Songs\654486 kamome sano Electric Orchestra - FIN4LE -Shushisen no Kanata e-\audio.mp3");
+            PlayMusic(@"F:\294951 LEDMaster - Chrono Diver -PENDULUMs-", @"F:\294951 LEDMaster - Chrono Diver -PENDULUMs-\Chrono Diver -PENDULUMs-.mp3");
             gameStartedPoint = DateTime.Now;
 
             loopDelegate += () =>
@@ -97,36 +98,33 @@ namespace Osu_Simulation
                 {
                     HitObject checkHitObject = HitObjects.Peek();
 
-                    if (checkHitObject.Time <= nowTiming + sync)
+                    if (checkHitObject.StartTime <= nowTiming + sync)
                     {
                         DisplayingHitObjects.Add(checkHitObject);
-                        CreatedHitObjects[HitObjects.Pop().Line].Add(checkHitObject);
+                        CreatedHitObjects[HitObjects.Pop().Line].Enqueue(checkHitObject);
                         loopDelegate();
                     }
                 }
 
-                for (int i = 0; i < 4; i++)
+                for (int i = 0; i < CreatedHitObjects.Length; i++)
                 {
                     if (CreatedHitObjects[i].Count == 0)
                         continue;
 
-                    HitObject temp = CreatedHitObjects[i].RemoveOne();
-                    if (temp.Time + 200 < nowTiming)
+                    HitObject temp = CreatedHitObjects[i].Peek();
+                    if (temp.StartTime + 100 < nowTiming)
                     {
                         Combo = 0;
                         Health -= 50;
                         judgeMessage = "MISS!";
-                    }
-                    else
-                    {
-                        CreatedHitObjects[i].Add(temp);
+                        DisplayingHitObjects.Remove(temp);
+                        CreatedHitObjects[i].Dequeue();
                     }
                 }
 
                 /*
                 if (DisplayingHitObjects.Count > 0 && DisplayingHitObjects[0].Time <= nowTiming)
                 {
-                    System.Diagnostics.Debug.WriteLine(test++);
                     DisplayingHitObjects.Remove(DisplayingHitObjects[0]);
                 }
                 */
@@ -147,39 +145,17 @@ namespace Osu_Simulation
         private void KeyInput(int input, DateTime inputTime)
         {
             int intervel;
-            HitObject min = null;
-            HitObject max = null;
-            HitObject nearest;
             double nowTiming = (DateTime.Now - gameStartedPoint).TotalMilliseconds;
 
-            for (int i = 0; i < CreatedHitObjects[input].Count; i++)
+            if (CreatedHitObjects[input].Count <= 0)
             {
-                HitObject temp = CreatedHitObjects[input].RemoveOne();
-                DisplayingHitObjects.Remove(temp);
-
-                if (temp.Time > nowTiming)
-                {
-                    max = temp;
-                    break;
-                }
-                else
-                {
-                    min = temp;
-                }
-            }
-
-            if (min == null)
                 return;
-            if (max == null || max > min)
-            {
-                nearest = min;
             }
-            else
-            {
-                nearest = max;
-            }
+            intervel = (int)((inputTime - gameStartedPoint).TotalMilliseconds) - CreatedHitObjects[input].Peek().StartTime;
+            if (intervel < -100)
+                return;
 
-            intervel = (int)((inputTime - gameStartedPoint).TotalMilliseconds) - nearest.Time;
+            DisplayingHitObjects.Remove(CreatedHitObjects[input].Dequeue());
 
             if (intervel < 0) intervel = -intervel;
             if (intervel < 200)

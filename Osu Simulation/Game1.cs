@@ -3,6 +3,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Osu_Simulation
 {
@@ -12,9 +13,12 @@ namespace Osu_Simulation
         SpriteBatch spriteBatch;
 
         Texture2D noteTexture;
+        Texture2D longNoteStartTexture;
         Texture2D stageLeftTexture;
         Texture2D stageRightTexture;
         Texture2D stageHintTexture;
+
+        SoundEffect NoteSound;
 
         delegate void LoopDelegate();
         LoopDelegate loopDelegate;
@@ -37,12 +41,14 @@ namespace Osu_Simulation
             // TODO: Add your initialization logic here
 
             base.Initialize();
-            ReadOsuFile(@"C:\Users\dsm2017\AppData\Local\osu!\Songs\654486 kamome sano Electric Orchestra - FIN4LE -Shushisen no Kanata e-\kamome sano Electric Orchestra - FIN4LE ~Shushisen no Kanata e~ (Faing Fain) [ADVANCED].osu");
+            ReadOsuFile(@"C:\Users\dsm2017\AppData\Local\osu!\Songs\123456 Lite Show Magic - Crack traxxxx\Lite Show Magic - Crack traxxxx (LeiN-) [4K ADV].osu");
             noteTexture = this.Content.Load<Texture2D>("mania-note1");
+            longNoteStartTexture = this.Content.Load<Texture2D>("mania-note1H");
             stageLeftTexture = this.Content.Load<Texture2D>("mania-stage-left");
             stageRightTexture = this.Content.Load<Texture2D>("mania-stage-right");
             stageHintTexture = this.Content.Load<Texture2D>("mania-stage-hint");
             font = this.Content.Load<SpriteFont>("ComboFont");
+            NoteSound = this.Content.Load<SoundEffect>("normal-hitnormal");
             graphics.PreferredBackBufferHeight = 600;
             graphics.ApplyChanges();
             PlayGame();
@@ -87,6 +93,7 @@ namespace Osu_Simulation
                 if(!keyPressed[Keys.D])
                 {
                     KeyInput(0, System.DateTime.Now);
+                    NoteSound.CreateInstance().Play();
                 }
 
                 keyPressed[Keys.D] = true;
@@ -101,6 +108,7 @@ namespace Osu_Simulation
                 if (!keyPressed[Keys.F])
                 {
                     KeyInput(1, System.DateTime.Now);
+                    NoteSound.CreateInstance().Play();
                 }
 
                 keyPressed[Keys.F] = true;
@@ -115,6 +123,7 @@ namespace Osu_Simulation
                 if (!keyPressed[Keys.J])
                 {
                     KeyInput(2, System.DateTime.Now);
+                    NoteSound.CreateInstance().Play();
                 }
 
                 keyPressed[Keys.J] = true;
@@ -129,6 +138,7 @@ namespace Osu_Simulation
                 if (!keyPressed[Keys.K])
                 {
                     KeyInput(3, System.DateTime.Now);
+                    NoteSound.CreateInstance().Play();
                 }
 
                 keyPressed[Keys.K] = true;
@@ -151,14 +161,20 @@ namespace Osu_Simulation
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            
+
 #pragma warning disable CS0618 // 형식 또는 멤버는 사용되지 않습니다.
 
+            Texture2D writer;
             spriteBatch.Begin();
             for (int i = 0; i < DisplayingHitObjects.Count; i++)
             {
                 DisplayingHitObjects[i].Y += 17;
-                spriteBatch.Draw(noteTexture,
+                if (DisplayingHitObjects[i].GetType)
+                    writer = noteTexture;
+                else
+                    writer = longNoteStartTexture;
+
+                spriteBatch.Draw(writer,
                     new Rectangle(DisplayingHitObjects[i].X, DisplayingHitObjects[i].Y, 70, 20),
                     new Rectangle(0, 0, noteTexture.Width, noteTexture.Height),
                     Color.White);
@@ -176,27 +192,17 @@ namespace Osu_Simulation
             spriteBatch.DrawString(font, $"{Combo} Combo!", new Vector2(180, 100), Color.White);
             spriteBatch.DrawString(font, judgeMessage, new Vector2(180, 300), Color.White);
 
+            /*
             Texture2D rect = new Texture2D(graphics.GraphicsDevice, (int)Health, 20);
             Color[] data = new Color[(int)Health *20];
             for (int i = 0; i < data.Length; ++i) data[i] = Color.Red;
             rect.SetData(data);
             spriteBatch.Draw(rect, new Vector2(374, graphics.PreferredBackBufferHeight - 20), Color.Red);
+            */
 
             spriteBatch.End();
             
             base.Draw(gameTime);
-            
-            for (int i = 0; i < DisplayingHitObjects.Count; i++)
-            {
-                if (DisplayingHitObjects[i].Y > graphics.PreferredBackBufferHeight + 20)
-                {
-                    DisplayingHitObjects.Remove(DisplayingHitObjects[i]);
-                    Combo = 0;
-                    Health -= 50;
-                    judgeMessage = "MISS!";
-                    continue;
-                }
-            }
 
 #pragma warning restore CS0618 // 형식 또는 멤버는 사용되지 않습니다.
         }
